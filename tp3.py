@@ -98,6 +98,17 @@ def main():
 
     ## Create instances. ##
     workers = create_instances(ec2,
+                                1,
+                                't2.micro',
+                                'ami-053b0d53c279acc90',
+                                security_id_workers,
+                                open('instance_mysql.sh', 'r').read(),
+                                key_pair_name,
+                                'us-east-1a',
+                                10)
+
+'''
+    workers = create_instances(ec2,
                                4,
                                'm4.large',
                                'ami-053b0d53c279acc90',
@@ -124,7 +135,7 @@ def main():
 
     # Workloads
     run_workloads(orchestrator_ip, n_threads, n_requests)
-
+'''
     ## Terminates all instances and load balancers to save up AWS credits. ##
     #time.sleep(5)
     #print("All images have been created. Now terminating all instances...")
