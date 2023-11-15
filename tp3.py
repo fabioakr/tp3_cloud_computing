@@ -90,11 +90,11 @@ def main():
     ec2 = boto3.resource('ec2', region_name='us-east-1')
 
     ## Create keypair if it doesn't exist yet. ##
-    key_pair_name = create_keypair(client, 'key_pair_tp2')
+    key_pair_name = create_keypair(client, 'key_pair_tp3')
 
     ## Create security group if it doesn't exist yet. ##
     security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
-    security_id_orchestrator = create_security_group(client, 'security_group_orchestrator', [22, 80])
+    #security_id_orchestrator = create_security_group(client, 'security_group_orchestrator', [22, 80])
 
     ## Create instances. ##
     workers = create_instances(ec2,
@@ -105,7 +105,7 @@ def main():
                                 open('instance_mysql.sh', 'r').read(),
                                 key_pair_name,
                                 'us-east-1a',
-                                10)
+                                8)
 
 '''
     workers = create_instances(ec2,
