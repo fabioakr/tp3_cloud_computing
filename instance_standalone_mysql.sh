@@ -18,9 +18,12 @@ cd sakila-db
 ## Installs the sakila database ##
 #mysql -u root
 #mysql
-
 mysql -e "SOURCE sakila-schema.sql;"
 mysql -e "SOURCE sakila-data.sql;"
+
+## Installs sysbench ##
+apt-get -y install sysbench
+
 
 ## To see if the sakila database was installed ##
 ## USE sakila;
@@ -32,4 +35,8 @@ mysql -e "SOURCE sakila-data.sql;"
 ## docker pull ubuntu
 ## docker run -i -t ubuntu /bin/bash
 ## https://dev.to/netk/getting-started-with-docker-running-an-ubuntu-image-4lk9
+## https://electrictoolbox.com/run-single-mysql-query-command-line/
+## https://dev.mysql.com/doc/sakila/en/sakila-installation.html
+## https://www.datacamp.com/tutorial/my-sql-tutorial
+## https://www.devart.com/dbforge/mysql/studio/how-to-show-all-database-list-in-mysql.html
 ## https://electrictoolbox.com/run-single-mysql-query-command-line/
