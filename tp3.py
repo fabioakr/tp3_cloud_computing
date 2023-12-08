@@ -102,7 +102,7 @@ def main():
                                 't2.micro',
                                 'ami-053b0d53c279acc90',
                                 security_id_workers,
-                                open('instance_mysql.sh', 'r').read(),
+                                open('instance_standalone_mysql.sh', 'r').read(),
                                 key_pair_name,
                                 'us-east-1a',
                                 8)
