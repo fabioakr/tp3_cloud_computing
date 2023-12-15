@@ -77,6 +77,12 @@ def main():
     n_threads = 12
     n_requests = 10
 
+    ## Assigns region name to be used.
+    region_name = 'us-east-1'
+
+    ## Assigns key pair name to be used.
+    key_pair_name = 'key_pair_tp3'
+
     ## If we put in three arguments they are used to specify the number of threads
     ## and requests. Otherwise we use default values
     if len(sys.argv) == 3:
@@ -84,13 +90,13 @@ def main():
         n_requests = int(sys.argv[2])
 
     ## The 'client' variable creates a link to the EC2 service. ##
-    client = boto3.client('ec2', region_name='us-east-1')
+    client = boto3.client('ec2', region_name)
 
     ## EC2 client. ##
-    ec2 = boto3.resource('ec2', region_name='us-east-1')
+    ec2 = boto3.resource('ec2', region_name)
 
     ## Create keypair if it doesn't exist yet. ##
-    key_pair_name = create_keypair(client, 'key_pair_tp3')
+    key_pair = create_keypair(client, key_pair_name)
 
     ## Create security group if it doesn't exist yet. ##
     security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
@@ -103,7 +109,7 @@ def main():
                                 'ami-053b0d53c279acc90',
                                 security_id_workers,
                                 open('instance_standalone_mysql.sh', 'r').read(),
-                                key_pair_name,
+                                key_pair,
                                 'us-east-1a',
                                 8)
 
