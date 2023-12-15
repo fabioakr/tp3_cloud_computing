@@ -144,7 +144,10 @@ def create_instances(ec2, n, instance_type, image_id, security_group_id, user_da
                 'Groups': [security_group_id],
                 'AssociatePublicIpAddress': True
             }
-        ]
+        ],
+        MetadataOptions={
+            'HttpTokens': 'required' ## 'optional' or 'required'
+        }
     )
 
     # register instances in target groups
