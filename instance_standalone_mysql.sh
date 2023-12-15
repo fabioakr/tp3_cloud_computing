@@ -24,6 +24,9 @@ mysql -e "SOURCE sakila-data.sql;"
 ## Installs sysbench ##
 apt-get -y install sysbench
 
+## Creates a few lines for testing? 
+sysbench oltp_read_write --table-size=1000000 --mysql-db=sakila --mysql-user=root prepare
+sysbench oltp_read_write --table-size=1000000 --threads=6 --time=60 --max-requests=0 --mysql-db=sakila --mysql-user=root run
 
 ## To see if the sakila database was installed ##
 ## USE sakila;
@@ -40,3 +43,7 @@ apt-get -y install sysbench
 ## https://www.datacamp.com/tutorial/my-sql-tutorial
 ## https://www.devart.com/dbforge/mysql/studio/how-to-show-all-database-list-in-mysql.html
 ## https://electrictoolbox.com/run-single-mysql-query-command-line/
+
+## How to change .pem file permissions
+## First access the path to the .pem file. Then run the following command:
+## chmod 400 [name of file].pem
