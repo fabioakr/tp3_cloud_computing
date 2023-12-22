@@ -28,12 +28,6 @@ apt-get -y install sysbench
 sysbench oltp_read_write --table-size=1000000 --mysql-db=sakila --mysql-user=root prepare
 sysbench oltp_read_write --table-size=1000000 --threads=6 --time=60 --max-requests=0 --mysql-db=sakila --mysql-user=root run > /var/log/bench_results.txt
 
-## THIS CODE IS NOT WORKING. SUPPOSED FIRST TO BE COPYING THE FILE TO THE TERMINAL FOR US... ##
-## CHECK FOR CHATGPT WHAT I ASKED. MAYBE THAT'S GONNA WORK AND CEST FINI ##
-#cd /
-#cd /var/log
-#cat cloud-init-output.log
-
 ## To see if the sakila database was installed ##
 ## USE sakila;
 ## SHOW FULL TABLES;
