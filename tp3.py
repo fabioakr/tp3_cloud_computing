@@ -96,7 +96,7 @@ def main():
     ec2 = boto3.resource('ec2', region_name)
 
     ## IAM client. ##
-    iam = boto3.client('iam')
+    iam_client = boto3.client('iam')
 
     ## SSM client. ##
     ssm_client = boto3.client('ssm', region_name=region_name)
