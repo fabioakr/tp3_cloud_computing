@@ -95,6 +95,12 @@ def main():
     ## EC2 client. ##
     ec2 = boto3.resource('ec2', region_name)
 
+    ## IAM client. ##
+    iam = boto3.client('iam')
+
+    ## SSM client. ##
+    ssm_client = boto3.client('ssm', region_name=region_name)
+
     ## Create keypair if it doesn't exist yet. ##
     key_pair = create_keypair(client, key_pair_name)
 
