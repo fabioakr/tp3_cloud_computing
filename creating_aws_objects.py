@@ -129,6 +129,11 @@ def create_instances(ec2, n, instance_type, image_id, security_group_id, user_da
                 }
             },
         ],
+        IamInstanceProfile={
+            #'Name': 'string',
+            'Arn': 'arn:aws:iam::924985102361:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM'
+            #'Name': 'AWSServiceRoleForAmazonSSM',
+        },
         MinCount=1,
         MaxCount=n,
         KeyName=key_pair_name,
