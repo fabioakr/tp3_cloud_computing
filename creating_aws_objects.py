@@ -101,7 +101,59 @@ def create_security_group(client, name, ports):
         print(f"Inbound port '{port}' enabled in security group '{name}' .\n")
     return security_group['GroupId']
 
-def create_instances(ec2, n, instance_type, image_id, security_group_id, user_data_script, key_pair_name, availability_zone, volume_size):
+def create_instance_profiles(iam_client):
+    # Replace 'your_role_name' and 'your_policy_arn' with your actual values
+    # POLICY_ARN SHOULD ALREADY EXIST!!
+    role_name = 'iam_role_for_ssm_tp3'
+    policy_arn = 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+
+    # Create an IAM role for SSM
+    role_response = iam_client.create_role(
+        RoleName=role_name,
+        AssumeRolePolicyDocument='{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "ec2.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
+    )
+
+    # Attach the SSM policy to the IAM role
+    iam_client.attach_role_policy(
+        RoleName=role_name,
+        PolicyArn=policy_arn
+    )
+
+    # Create an IAM instance profile
+    instance_profile_response = iam_client.create_instance_profile(
+        InstanceProfileName='instance_profile_for_ssm',
+    )
+
+    # Associate the IAM role with the instance profile
+    iam_client.add_role_to_instance_profile(
+        InstanceProfileName=instance_profile_response['InstanceProfile']['InstanceProfileName'],
+        RoleName=role_name
+    )
+
+    print(instance_profile_response)
+
+    print(f"IAM Role Name: {role_name}")
+    print(f"IAM Role ARN: {role_response['Role']['Arn']}")
+    print(f"Instance Profile Name: {instance_profile_response['InstanceProfile']['InstanceProfileName']}")
+    print(f"Instance Profile ARN: {instance_profile_response['InstanceProfile']['Arn']}")
+
+    '''response = client.list_instance_profiles()
+    print(response)
+    print(response['InstanceProfiles'])
+    if(response['InstanceProfiles'] == []):
+        print("Empty")
+        response = client.create_instance_profile(
+            InstanceProfileName=name,
+            #Path='string',
+            #Tags=[
+            #    {
+            #        'Key': 'string',
+             #       'Value': 'string'
+             #   },
+            #]
+        )'''
+
+def create_instances(ec2, n, instance_type, image_id, security_group_id, user_data_script, key_pair_name, availability_zone, volume_size, instance_profile_arn):
     """
     Creates EC2 instances with the specified parameters.
 
@@ -131,8 +183,7 @@ def create_instances(ec2, n, instance_type, image_id, security_group_id, user_da
         ],
         IamInstanceProfile={
             #'Name': 'string',
-            'Arn': 'arn:aws:iam::924985102361:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM'
-            #'Name': 'AWSServiceRoleForAmazonSSM',
+            'Arn': instance_profile_arn
         },
         MinCount=1,
         MaxCount=n,
