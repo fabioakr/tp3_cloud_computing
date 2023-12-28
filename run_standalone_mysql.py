@@ -4,14 +4,14 @@
 
 ## Imports libraries publicly available. ##
 import json
-import sys
+#import sys
 import time
 import boto3
 
 ## Imports libraries created by us. ##
 from creating_aws_objects import create_keypair, create_security_group, create_instances, create_instance_profiles
 from cleaning import main as cleaning_after_tests
-from workloads import run_workloads
+#from workloads import run_workloads
 
 
 def create_workers_file(client, workers):
