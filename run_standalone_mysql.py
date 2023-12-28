@@ -74,8 +74,8 @@ def obtain_orchestrator_ip(orchestrator):
 
 def main():
     ## Assign the number of threads and requests used
-    n_threads = 12
-    n_requests = 10
+    ## n_threads = 12
+    ## n_requests = 10
 
     ## Assigns region name to be used.
     region_name = 'us-east-1'
@@ -85,9 +85,9 @@ def main():
 
     ## If we put in three arguments they are used to specify the number of threads
     ## and requests. Otherwise we use default values
-    if len(sys.argv) == 3:
-        n_threads = int(sys.argv[1])
-        n_requests = int(sys.argv[2])
+    #if len(sys.argv) == 3:
+    #    n_threads = int(sys.argv[1])
+    #    n_requests = int(sys.argv[2])
 
     ## The 'client' variable creates a link to the EC2 service. ##
     client = boto3.client('ec2', region_name)
@@ -126,11 +126,12 @@ def main():
     ## to read the log file containing the benchmark results. ##
     instance_ids = [instance.instance_id for instance in workers]
     print(instance_ids[0])
-
     instance_id = instance_ids[0]
 
-    ## Tells system to wait this time, so benchmark is there for sure. ##
-    time.sleep(10)
+    ## Puts the code on hold, so instance has enough time to run benchmark. ##
+    print('Please wait, while the benchmark is running... This might take a while!')
+    time.sleep(240)
+    ## 60 120 before
 
     ## Sends command to read the log file containing the benchmark results. ##
     file_path = '/var/log/bench_results.txt'
