@@ -114,9 +114,9 @@ def create_instance_profiles(iam_client):
         for i in range(0, len(instance_profile_search['InstanceProfiles'])):
             ## In case the instance profile already exists ##
             if instance_profile_search['InstanceProfiles'][i]['InstanceProfileName'] == 'instance_profile_for_ssm_tp3':
-                print("Instance profile already exists.")
+                print("Instance profile 'instance_profile_for_ssm_tp3' already exists.")
                 return instance_profile_search['InstanceProfiles'][i]['Arn']
-        print("There were other instance profiles, but not the one we need. Creating...")
+        print("There were other instance profiles, but not the one we need ('instance_profile_for_ssm_tp3'). Creating...")
 
 
     ## Creates the instance profile, below ##

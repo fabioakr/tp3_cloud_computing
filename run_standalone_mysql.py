@@ -125,7 +125,7 @@ def main():
                                 'us-east-1a',
                                 8,
                                 instance_profile_arn)
-    
+
     ## Collects instance ids. Needed for sending the command  ##
     ## to read the log file containing the benchmark results. ##
     instance_ids = [instance.instance_id for instance in workers]
