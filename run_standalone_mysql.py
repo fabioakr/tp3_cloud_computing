@@ -126,13 +126,13 @@ def main():
     ## Collects instance ids. Needed for sending the command  ##
     ## to read the log file containing the benchmark results. ##
     instance_ids = [instance.instance_id for instance in workers]
-    print(instance_ids[0])
+    #print(instance_ids[0])
     instance_id = instance_ids[0]
 
     ## Puts the code on hold, so instance has enough time to run benchmark. ##
-    print('Please wait, while the benchmark is running... This might take a while!')
-    time.sleep(240)
-    ## 60 120 before
+    print('\nPlease wait, while the benchmark is running... This will take a while!\n')
+    time.sleep(400)
+    ## 60 120 240 300 before
 
     ## Sends command to read the log file containing the benchmark results. ##
     file_path = '/var/log/bench_results.txt'
@@ -161,6 +161,10 @@ def main():
     # Print the file contents on the terminal
     print(f'Contents of {file_path}:\n{output}')
 
+    ## Terminates all instances and load balancers to save up AWS credits. ##
+    #time.sleep(5)
+    print('Finally, now terminating all instances...')
+    cleaning_after_tests(client)
 
 '''
     # create workers.json file
@@ -171,10 +175,6 @@ def main():
     # Workloads
     run_workloads(orchestrator_ip, n_threads, n_requests)
 '''
-    ## Terminates all instances and load balancers to save up AWS credits. ##
-    #time.sleep(5)
-    #print("All images have been created. Now terminating all instances...")
-    #cleaning_after_tests(client)
 
 
 ##  Takes the program back to main(). ##
