@@ -108,7 +108,7 @@ def main():
     security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
 
     ## Create instance profile if it doesn't exist yet. ##
-    #create_instance_profiles(iam_client)
+    instance_profile_arn = create_instance_profiles(iam_client)
 
     ## Create instances. ##
     workers = create_instances(ec2,
@@ -120,7 +120,7 @@ def main():
                                 key_pair,
                                 'us-east-1a',
                                 8,
-                                'arn:aws:iam::300836421196:instance-profile/instance_profile_for_ssm')
+                                instance_profile_arn)
 
     ## Terminates all instances and load balancers to save up AWS credits. ##
     #time.sleep(5)
