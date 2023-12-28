@@ -74,9 +74,9 @@ def create_security_group(client, name, ports):
                             'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}
                         ]
                     )
-                    print(f"Inbound port '{port}' enabled in security group '{name}' .\n")
+                    print(f"Inbound port '{port}' enabled in security group '{name}' .")
                 else:
-                    print(f"Inbound port '{port}' is already enabled in security group '{name}' .\n")
+                    print(f"Inbound port '{port}' is already enabled in security group '{name}' .")
             return security_group['GroupId']
 
     # 2nd case: there is no security group with that name OR there isn't a group yet.
@@ -98,7 +98,8 @@ def create_security_group(client, name, ports):
                 'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}
             ]
         )
-        print(f"Inbound port '{port}' enabled in security group '{name}' .\n")
+        print(f"Inbound port '{port}' enabled in security group '{name}' .")
+    print()
     return security_group['GroupId']
 
 def create_instance_profiles(iam_client):
