@@ -116,15 +116,26 @@ def main():
     ## Create instances. ##
     print()
     workers = create_instances(ec2,
-                                1,
+                                3,
                                 't2.micro',
                                 'ami-053b0d53c279acc90',
                                 security_id_workers,
-                                open('instance_standalone_mysql.sh', 'r').read(),
+                                open('cluster_mysql_workers.sh', 'r').read(),
                                 key_pair,
                                 'us-east-1a',
                                 8,
                                 instance_profile_arn)
+    
+    master = create_instances(ec2,
+                            1,
+                            't2.micro',
+                            'ami-053b0d53c279acc90',
+                            security_id_workers,
+                            open('cluster_mysql_manager.sh', 'r').read(),
+                            key_pair,
+                            'us-east-1a',
+                            8,
+                            instance_profile_arn)
 
     ## Collects instance ids. Needed for sending the command  ##
     ## to read the log file containing the benchmark results. ##
