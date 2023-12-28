@@ -106,7 +106,6 @@ def main():
 
     ## Create security group if it doesn't exist yet. ##
     security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
-    #security_id_orchestrator = create_security_group(client, 'security_group_orchestrator', [22, 80])
 
     ## Create instance profile if it doesn't exist yet. ##
     instance_profile_arn = create_instance_profiles(iam_client)
@@ -131,7 +130,7 @@ def main():
     instance_id = instance_ids[0]
 
     ## Tells system to wait this time, so benchmark is there for sure. ##
-    time.sleep(5)
+    time.sleep(10)
 
     ## Sends command to read the log file containing the benchmark results. ##
     file_path = '/var/log/bench_results.txt'
