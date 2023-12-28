@@ -162,28 +162,8 @@ def main():
 
 
 '''
-    workers = create_instances(ec2,
-                               4,
-                               'm4.large',
-                               'ami-053b0d53c279acc90',
-                               security_id_workers,
-                               open('instance_workers.sh', 'r').read(),
-                               key_pair_name,
-                               'us-east-1a',
-                               10)
-
     # create workers.json file
     create_workers_file(ec2, workers)
-
-    orchestrator = create_instances(ec2,
-                                    1,
-                                    'm4.large',
-                                    'ami-053b0d53c279acc90',
-                                    security_id_orchestrator,
-                                    open('instance_orchestrator.sh', 'r').read(),
-                                    key_pair_name,
-                                    'us-east-1a',
-                                    8)
 
     orchestrator_ip = obtain_orchestrator_ip(orchestrator[0])
 
