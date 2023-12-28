@@ -102,6 +102,23 @@ def create_security_group(client, name, ports):
     return security_group['GroupId']
 
 def create_instance_profiles(iam_client):
+    ## Asks for all instance profiles in the account ##
+    instance_profile_search = iam_client.list_instance_profiles()
+
+    ## In case there are no instance profiles in the account ##
+    if instance_profile_search['InstanceProfiles'] == []:
+        print("No instance profiles found. Creating...")
+
+    else:
+        for i in range(0, len(instance_profile_search['InstanceProfiles'])):
+            ## In case the instance profile already exists ##
+            if instance_profile_search['InstanceProfiles'][i]['InstanceProfileName'] == 'instance_profile_for_ssm_tp3':
+                print("Instance profile already exists.")
+                return instance_profile_search['InstanceProfiles'][i]['Arn']
+        print("There were other instance profiles, but not the one we need. Creating...")
+
+
+    ## Creates the instance profile, below ##
     # Replace 'your_role_name' and 'your_policy_arn' with your actual values
     # POLICY_ARN SHOULD ALREADY EXIST!!
     role_name = 'iam_role_for_ssm_tp3'
@@ -121,7 +138,7 @@ def create_instance_profiles(iam_client):
 
     # Create an IAM instance profile
     instance_profile_response = iam_client.create_instance_profile(
-        InstanceProfileName='instance_profile_for_ssm',
+        InstanceProfileName='instance_profile_for_ssm_tp3',
     )
 
     # Associate the IAM role with the instance profile
@@ -130,28 +147,14 @@ def create_instance_profiles(iam_client):
         RoleName=role_name
     )
 
-    print(instance_profile_response)
+    #print(instance_profile_response)
 
-    print(f"IAM Role Name: {role_name}")
-    print(f"IAM Role ARN: {role_response['Role']['Arn']}")
-    print(f"Instance Profile Name: {instance_profile_response['InstanceProfile']['InstanceProfileName']}")
-    print(f"Instance Profile ARN: {instance_profile_response['InstanceProfile']['Arn']}")
+    #print(f"IAM Role Name: {role_name}")
+    #print(f"IAM Role ARN: {role_response['Role']['Arn']}")
+    #print(f"Instance Profile Name: {instance_profile_response['InstanceProfile']['InstanceProfileName']}")
+    #print(f"Instance Profile ARN: {instance_profile_response['InstanceProfile']['Arn']}")
 
-    '''response = client.list_instance_profiles()
-    print(response)
-    print(response['InstanceProfiles'])
-    if(response['InstanceProfiles'] == []):
-        print("Empty")
-        response = client.create_instance_profile(
-            InstanceProfileName=name,
-            #Path='string',
-            #Tags=[
-            #    {
-            #        'Key': 'string',
-             #       'Value': 'string'
-             #   },
-            #]
-        )'''
+    return instance_profile_response['InstanceProfile']['Arn']
 
 def create_instances(ec2, n, instance_type, image_id, security_group_id, user_data_script, key_pair_name, availability_zone, volume_size, instance_profile_arn):
     """
