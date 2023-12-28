@@ -220,5 +220,34 @@ def create_instances(ec2, n, instance_type, image_id, security_group_id, user_da
 
     return instances
 
+def send_commands(ssm_client, instance_id, command):
+    # Send the command to the EC2 instance
+    response = ssm_client.send_command(
+        InstanceIds=[instance_id],
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [command]}
+    )
+
+    # Get the command ID for later retrieval
+    command_id = response['Command']['CommandId']
+
+    # Print the command ID
+    print(f"Command ID: {command_id}")
+
+    # Wait for the command to complete
+    waiter = ssm_client.get_waiter('command_executed')
+    waiter.wait(CommandId=command_id, InstanceId=instance_id)
+
+    # Get the command output
+    output = ssm_client.get_command_invocation(
+        CommandId=command_id,
+        InstanceId=instance_id
+    )['StandardOutputContent']
+
+    # Print the command output
+    print(f'Command Output:\n{output}')
+
+    return 0
+
 if __name__ == '__main__':
     pass
