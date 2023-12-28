@@ -166,7 +166,7 @@ def main():
 
     ## Terminates all instances and load balancers to save up AWS credits. ##
     #time.sleep(5)
-    print('Finally, now terminating all instances...')
+    print('Finally, now terminating all instances...\n')
     cleaning_after_tests(client)
 
 '''
