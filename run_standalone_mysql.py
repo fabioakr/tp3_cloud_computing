@@ -103,15 +103,18 @@ def main():
     ssm_client = boto3.client('ssm', region_name=region_name)
 
     ## Create keypair if it doesn't exist yet. ##
+    print()
     key_pair = create_keypair(client, key_pair_name)
 
     ## Create security group if it doesn't exist yet. ##
     security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
 
     ## Create instance profile if it doesn't exist yet. ##
+    print()
     instance_profile_arn = create_instance_profiles(iam_client)
 
     ## Create instances. ##
+    print()
     workers = create_instances(ec2,
                                 1,
                                 't2.micro',
