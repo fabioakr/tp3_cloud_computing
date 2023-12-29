@@ -9,14 +9,17 @@ wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster-communi
 apt-get -y install libclass-methodmaker-perl
 dpkg -i mysql-cluster-community-data-node_8.2.0-1ubuntu22.04_amd64.deb
 
-cd ~
-cd /etc
+#cd ~
+#cd /etc
 
-echo "[mysql_cluster]
+#echo "[mysql_cluster]
 # Options for NDB Cluster processes:
-ndb-connectstring=198.51.100.2  # location of cluster manager" | tee my.cnf
+#ndb-connectstring=198.51.100.2  # location of cluster manager" | tee my.cnf
 
 mkdir -p /usr/local/mysql/data
+
+# Use this in case you're not able to set correct rules for enabling port 
+#ufw disable 
 
 ## How to run Ubuntu on Docker
 ## docker pull ubuntu
