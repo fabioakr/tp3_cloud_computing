@@ -279,5 +279,57 @@ def create_files(ssm_client, instance_id, file_content, file_path):
 
     return 0
 
+def create_manager_file(ssm_client, instance_id, manager_private_ip_addresses, workers_private_ip_addresses):
+    file_path = "/var/lib/mysql-cluster/config.ini"
+    file_content = """[ndbd default]
+# Options affecting ndbd processes on all data nodes:
+NoOfReplicas=2	# Number of replicas
+
+[ndb_mgmd]
+# Management process options:
+hostname=""" + manager_private_ip_addresses[0] + """
+datadir=/var/lib/mysql-cluster 	# Directory for the log files
+
+[ndbd]
+hostname=""" + workers_private_ip_addresses[0] + """ # Hostname/IP of the first data node
+NodeId=2			# Node ID for this data node
+datadir=/usr/local/mysql/data	# Remote directory for the data files
+
+[ndbd]
+hostname=""" + workers_private_ip_addresses[1] + """ # Hostname/IP of the second data node
+NodeId=3			# Node ID for this data node
+datadir=/usr/local/mysql/data	# Remote directory for the data files
+
+[mysqld]
+# SQL node options:
+hostname=""" + manager_private_ip_addresses[0] + """ # In our case the MySQL server/client is on the same Droplet as the cluster manager"""
+
+    # Send the command to create the text file
+    command = f'echo -e "{file_content}" > {file_path}'
+    response = ssm_client.send_command(
+        InstanceIds=[instance_id],
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [command]}
+    )
+
+    # Get the command ID
+    command_id = response['Command']['CommandId']
+
+    # Poll for the command completion status
+    while True:
+        command_status = ssm_client.get_command_invocation(
+            CommandId=command_id,
+            InstanceId=instance_id
+        ).get('Status')
+
+        if command_status in ['Success', 'Failed', 'TimedOut', 'Canceled']:
+            break
+
+        time.sleep(5)  # Adjust the polling interval as needed
+
+    print(f'Command Status: {command_status}')
+
+    return 0
+
 if __name__ == '__main__':
     pass
