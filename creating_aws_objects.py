@@ -344,6 +344,8 @@ ndb-connectstring=""" + manager_private_ip_addresses[0] + """ # location of clus
 
     return 0
 
+def add_port_to_security_group():
+    return 0
 
 if __name__ == '__main__':
     pass
