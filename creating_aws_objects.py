@@ -3,6 +3,8 @@
     AWS objects and allow for the necessary operations on TP2. 
 """
 
+import time
+
 def create_keypair(client, name):
     """
     Creates a new key pair with the specified name if it doesn't already exist.
@@ -246,6 +248,34 @@ def send_commands(ssm_client, instance_id, command):
 
     # Print the command output
     print(f'Command Output:\n{output}')
+
+    return 0
+
+def create_files(ssm_client, instance_id, file_content, file_path):
+    # Send the command to create the text file
+    command = f'echo "{file_content}" > {file_path}'
+    response = ssm_client.send_command(
+        InstanceIds=[instance_id],
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [command]}
+    )
+
+    # Get the command ID
+    command_id = response['Command']['CommandId']
+
+    # Poll for the command completion status
+    while True:
+        command_status = ssm_client.get_command_invocation(
+            CommandId=command_id,
+            InstanceId=instance_id
+        ).get('Status')
+
+        if command_status in ['Success', 'Failed', 'TimedOut', 'Canceled']:
+            break
+
+        time.sleep(5)  # Adjust the polling interval as needed
+
+    print(f'Command Status: {command_status}')
 
     return 0
 
