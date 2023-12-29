@@ -305,7 +305,7 @@ datadir=/usr/local/mysql/data	# Remote directory for the data files
 hostname=""" + manager_private_ip_addresses[0] + """ # In our case the MySQL server/client is on the same Droplet as the cluster manager"""
 
     # Send the command to create the text file
-    command = f'echo -e "{file_content}" > {file_path}'
+    command = f'echo "{file_content}" > {file_path}'
     response = ssm_client.send_command(
         InstanceIds=[instance_id],
         DocumentName='AWS-RunShellScript',
@@ -315,21 +315,35 @@ hostname=""" + manager_private_ip_addresses[0] + """ # In our case the MySQL ser
     # Get the command ID
     command_id = response['Command']['CommandId']
 
-    # Poll for the command completion status
-    while True:
-        command_status = ssm_client.get_command_invocation(
-            CommandId=command_id,
-            InstanceId=instance_id
-        ).get('Status')
-
-        if command_status in ['Success', 'Failed', 'TimedOut', 'Canceled']:
-            break
-
-        time.sleep(5)  # Adjust the polling interval as needed
-
-    print(f'Command Status: {command_status}')
+    # Wait for the command to complete
+    waiter = ssm_client.get_waiter('command_executed')
+    waiter.wait(CommandId=command_id, InstanceId=instance_id)
 
     return 0
+
+def create_worker_file(ssm_client, instance_id, manager_private_ip_addresses):
+    file_path = "/etc/my.cnf"
+    file_content = """[mysql_cluster]
+# Options for NDB Cluster processes:
+ndb-connectstring=""" + manager_private_ip_addresses[0] + """ # location of cluster manager"""
+
+    # Send the command to create the text file
+    command = f'echo "{file_content}" > {file_path}'
+    response = ssm_client.send_command(
+        InstanceIds=[instance_id],
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [command]}
+    )
+
+    # Get the command ID
+    command_id = response['Command']['CommandId']
+
+    # Wait for the command to complete
+    waiter = ssm_client.get_waiter('command_executed')
+    waiter.wait(CommandId=command_id, InstanceId=instance_id)
+
+    return 0
+
 
 if __name__ == '__main__':
     pass
