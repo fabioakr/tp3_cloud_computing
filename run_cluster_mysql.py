@@ -10,7 +10,8 @@ import boto3
 
 ## Imports libraries created by us. ##
 from creating_aws_objects import create_keypair, create_security_group, create_instances
-from creating_aws_objects import create_instance_profiles, send_commands
+from creating_aws_objects import create_instance_profiles, send_commands, create_files
+from creating_aws_objects import create_manager_file, create_worker_file
 from cleaning import main as cleaning_after_tests
 
 
@@ -96,16 +97,16 @@ def main():
     key_pair = create_keypair(client, key_pair_name)
 
     ## Create security group if it doesn't exist yet. ##
-    security_group_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
+    security_group_workers = create_security_group(client, 'security_group_workers', [22, 1186])
     print()
-    security_group_manager = create_security_group(client, 'security_group_manager', [22, 8000, 8001])
+    security_group_manager = create_security_group(client, 'security_group_manager', [22, 1186])
 
     ## Create instance profile if it doesn't exist yet. ##
     print()
     instance_profile_arn = create_instance_profiles(iam_client)
 
     ## Creates worker instances ##
-    print()
+    print("\nCreating worker instances...")
     workers = create_instances(ec2,
                                 2,
                                 't2.micro',
@@ -116,6 +117,8 @@ def main():
                                 'us-east-1a',
                                 8,
                                 instance_profile_arn)
+
+    #print(workers[0].id)
 
     ## Gets public and private IP adress of each worker ##
     workers_private_ip_addresses = []
@@ -135,7 +138,7 @@ def main():
     print(workers_public_ip_addresses)
 
     ## Creates manager instance ##
-    print()
+    print("\nCreating manager instance...")
     manager = create_instances(ec2,
                             1,
                             't2.micro',
@@ -163,6 +166,18 @@ def main():
 
     print(manager_private_ip_addresses)
     print(manager_public_ip_addresses)
+
+    ## Waits for instances to run scripts completely ##
+    print("\nWaiting for instances to run scripts completely...\n")
+    time.sleep(200)
+
+    ## Creates file in manager, containing all IPs of workers ##
+    create_manager_file(ssm_client, manager[0].id, manager_private_ip_addresses, workers_private_ip_addresses)
+    create_worker_file(ssm_client, workers[0].id, manager_private_ip_addresses)
+    create_worker_file(ssm_client, workers[1].id, manager_private_ip_addresses)
+
+    ## Tests if sending commands is working ##
+    #send_commands(ssm_client, workers[0].instance_id, 'apt-get update')
 
 ##  Takes the program back to main(). ##
 if __name__ == '__main__':
