@@ -2,31 +2,21 @@
 
 apt-get update
 apt-get -y upgrade
-#apt-get -y install python3-pip
-#apt-get -y install mysql-server
-#service mysql start
-
 apt-get -y install wget
 
-## Installs tool that unzips stuff ##
-## apt-get -y install unzip
+cd ~
+wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster-community-data-node_8.2.0-1ubuntu22.04_amd64.deb
+apt-get -y install libclass-methodmaker-perl
+dpkg -i mysql-cluster-community-data-node_8.2.0-1ubuntu22.04_amd64.deb
 
-#service mysqld stop
-#yum remove mysql-server mysql mysql-devel
+cd ~
+cd /etc
 
-mkdir -p /opt/mysqlcluster/home
-cd /opt/mysqlcluster/home
+echo "[mysql_cluster]
+# Options for NDB Cluster processes:
+ndb-connectstring=198.51.100.2  # location of cluster manager" | tee my.cnf
 
-wget http://dev.mysql.com/get/Downloads/MySQL-Cluster-7.2/mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
-tar xvf mysql-cluster-gpl-7.2.1-linux2.6-x86_64.tar.gz
-ln -s mysql-cluster-gpl-7.2.1-linux2.6-x86_64 mysqlc
-
-echo ‘export MYSQLC_HOME=/opt/mysqlcluster/home/mysqlc’ > /etc/profile.d/mysqlc.sh
-echo ‘export PATH=$MYSQLC_HOME/bin:$PATH’ >> /etc/profile.d/mysqlc.sh
-source /etc/profile.d/mysqlc.sh
-
-
-
+mkdir -p /usr/local/mysql/data
 
 ## How to run Ubuntu on Docker
 ## docker pull ubuntu
