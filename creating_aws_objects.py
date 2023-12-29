@@ -222,7 +222,7 @@ def create_instances(ec2, n, instance_type, image_id, security_group_id, user_da
 
     return instances
 
-def send_commands(ssm_client, instance_id, command):
+def send_commands(ssm_client, instance_id, command): #### IDK IF THIS NEEDS SUDO OR NOT IN "COMMAND". PLS CHECK. SEEMS THAT's NOT NEEDED
     # Send the command to the EC2 instance
     response = ssm_client.send_command(
         InstanceIds=[instance_id],
