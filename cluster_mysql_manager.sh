@@ -14,7 +14,7 @@ dpkg -i mysql-cluster-community-management-server_8.2.0-1ubuntu22.04_amd64.deb
 
 mkdir /var/lib/mysql-cluster
 cd ~
-cd /var/lib/mysql-cluster/
+cd /var/lib/mysql-cluster
 
 echo "[ndbd default]
 # Options affecting ndbd processes on all data nodes:
