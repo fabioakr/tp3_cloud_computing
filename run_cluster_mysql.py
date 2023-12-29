@@ -134,8 +134,8 @@ def main():
         workers_private_ip_addresses.append(private_ip)
         workers_public_ip_addresses.append(public_ip)
 
-    print(workers_private_ip_addresses)
-    print(workers_public_ip_addresses)
+    print("Private IPs:", workers_private_ip_addresses)
+    print("Public IPs:", workers_public_ip_addresses)
 
     ## Creates manager instance ##
     print("\nCreating manager instance...")
@@ -164,11 +164,11 @@ def main():
         manager_private_ip_addresses.append(private_ip)
         manager_public_ip_addresses.append(public_ip)
 
-    print(manager_private_ip_addresses)
-    print(manager_public_ip_addresses)
+    print("Private IPs:", manager_private_ip_addresses)
+    print("Public IPs:", manager_public_ip_addresses)
 
     ## Waits for instances to run scripts completely ##
-    print("\nWaiting for instances to run scripts completely...\n")
+    print("\nWaiting for instances to run scripts completely... This will take a while!\n")
     time.sleep(200)
 
     ## Creates file in manager, containing all IPs of workers ##
@@ -176,8 +176,14 @@ def main():
     create_worker_file(ssm_client, workers[0].id, manager_private_ip_addresses)
     create_worker_file(ssm_client, workers[1].id, manager_private_ip_addresses)
 
-    ## Tests if sending commands is working ##
-    #send_commands(ssm_client, workers[0].instance_id, 'apt-get update')
+    ## Enables manager node ##
+    print("Enabling manager node...")
+    send_commands(ssm_client, manager[0].instance_id, 'ndb_mgmd -f /var/lib/mysql-cluster/config.ini')
+
+    ## Enables workers nodes ##
+    for i in range(2):
+        print(f"Enabling worker node {i}...")
+        send_commands(ssm_client, workers[i].instance_id, 'ndbd')
 
 ##  Takes the program back to main(). ##
 if __name__ == '__main__':
