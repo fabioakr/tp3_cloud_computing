@@ -18,7 +18,7 @@ cd /var/lib/mysql-cluster
 
 echo "[ndbd default]
 # Options affecting ndbd processes on all data nodes:
-NoOfReplicas=3	# Number of replicas
+NoOfReplicas=2	# Number of replicas
 
 [ndb_mgmd]
 # Management process options:
@@ -33,11 +33,6 @@ datadir=/usr/local/mysql/data	# Remote directory for the data files
 [ndbd]
 hostname=198.51.100.1 # Hostname/IP of the second data node
 NodeId=3			# Node ID for this data node
-datadir=/usr/local/mysql/data	# Remote directory for the data files
-
-[ndbd]
-hostname=198.51.100.2 # Hostname/IP of the second data node
-NodeId=4			# Node ID for this data node
 datadir=/usr/local/mysql/data	# Remote directory for the data files
 
 [mysqld]
