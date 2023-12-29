@@ -11,41 +11,11 @@ apt-get -y install wget
 cd ~
 wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster-community-management-server_8.2.0-1ubuntu22.04_amd64.deb
 dpkg -i mysql-cluster-community-management-server_8.2.0-1ubuntu22.04_amd64.deb
-
 mkdir /var/lib/mysql-cluster
-cd ~
-cd /var/lib/mysql-cluster
 
-echo "[ndbd default]
-# Options affecting ndbd processes on all data nodes:
-NoOfReplicas=2	# Number of replicas
-
-[ndb_mgmd]
-# Management process options:
-hostname=198.51.100.2 # Hostname of the manager
-datadir=/var/lib/mysql-cluster 	# Directory for the log files
-
-[ndbd]
-hostname=198.51.100.0 # Hostname/IP of the first data node
-NodeId=2			# Node ID for this data node
-datadir=/usr/local/mysql/data	# Remote directory for the data files
-
-[ndbd]
-hostname=198.51.100.1 # Hostname/IP of the second data node
-NodeId=3			# Node ID for this data node
-datadir=/usr/local/mysql/data	# Remote directory for the data files
-
-[mysqld]
-# SQL node options:
-hostname=198.51.100.2 # In our case the MySQL server/client is on the same Droplet as the cluster manager" | tee config.ini
-
-
-## Installs tool that unzips stuff ##
-## apt-get -y install unzip
-
-#service mysqld stop
-#yum remove mysql-server mysql mysql-devel
-
+# Use this in case you're not able to set correct rules for enabling port 
+#ufw disable 
+# port 1186
 
 ## How to run Ubuntu on Docker
 ## docker pull ubuntu
