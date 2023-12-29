@@ -116,7 +116,7 @@ def main():
     ## Create instances. ##
     print()
     workers = create_instances(ec2,
-                                3,
+                                2,
                                 't2.micro',
                                 'ami-053b0d53c279acc90',
                                 security_id_workers,
