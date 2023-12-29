@@ -107,7 +107,8 @@ def main():
     key_pair = create_keypair(client, key_pair_name)
 
     ## Create security group if it doesn't exist yet. ##
-    security_id_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
+    security_group_workers = create_security_group(client, 'security_group_workers', [22, 8000, 8001])
+    security_group_manager = create_security_group(client, 'security_group_manager', [22, 8000, 8001])
 
     ## Create instance profile if it doesn't exist yet. ##
     print()
@@ -119,7 +120,7 @@ def main():
                                 2,
                                 't2.micro',
                                 'ami-053b0d53c279acc90',
-                                security_id_workers,
+                                security_group_workers,
                                 open('cluster_mysql_workers.sh', 'r').read(),
                                 key_pair,
                                 'us-east-1a',
@@ -130,7 +131,7 @@ def main():
                             1,
                             't2.micro',
                             'ami-053b0d53c279acc90',
-                            security_id_workers,
+                            security_group_manager,
                             open('cluster_mysql_manager.sh', 'r').read(),
                             key_pair,
                             'us-east-1a',
