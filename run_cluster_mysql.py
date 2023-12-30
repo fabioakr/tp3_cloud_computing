@@ -185,6 +185,50 @@ def main():
         print(f"Enabling worker node {i}...")
         send_commands(ssm_client, workers[i].instance_id, 'ndbd')
 
+    ## Enables MySQL server and client ##
+    print("Enabling MySQL server and client on manager instance... This will take a while!")
+    mysql_server_config = """cd ~
+cd /var
+mkdir installing
+cd installing
+wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar
+mkdir install
+tar -xvf mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar -C install/
+cd install
+
+apt-get update
+apt-get -y install libaio1 libmecab2  ## IDK if here you need to reset your instance
+
+dpkg -i mysql-common_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client-plugins_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client-core_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-client_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-server-core_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-server_8.2.0-1ubuntu22.04_amd64.deb"""
+    send_commands(ssm_client, manager[0].instance_id, mysql_server_config)
+
+'''cd ~
+cd /var
+mkdir installing
+cd installing
+wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar
+mkdir install
+tar -xvf mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar -C install/
+cd install
+
+apt-get update
+apt-get -y install libaio1 libmecab2  ## IDK if here you need to reset your instance
+
+dpkg -i mysql-common_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client-plugins_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client-core_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-client_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-client_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-server-core_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-cluster-community-server_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-server_8.2.0-1ubuntu22.04_amd64.deb'''
+
 ##  Takes the program back to main(). ##
 if __name__ == '__main__':
     main()
