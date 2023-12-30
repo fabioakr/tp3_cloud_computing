@@ -3,6 +3,7 @@
     AWS objects and allow for the necessary operations on TP2. 
 """
 
+import logging
 import time
 from botocore.exceptions import WaiterError
 
@@ -294,18 +295,15 @@ def append_files(ssm_client, instance_id, file_content, file_path):
     print(command_id)
 
     # Poll for the command completion status
-    while True:
-        command_status = ssm_client.get_command_invocation(
+    waiter = ssm_client.get_waiter("command_executed")
+    try:
+        waiter.wait(
             CommandId=command_id,
-            InstanceId=instance_id
-        ).get('Status')
-
-        if command_status in ['Success', 'Failed', 'TimedOut', 'Canceled']:
-            break
-
-        time.sleep(0.3)  # Adjust the polling interval as needed
-
-    print(f'Command Status: {command_status}')
+            InstanceId=instance_id,
+        )
+    except WaiterError as ex:
+        logging.error(ex)
+        return
 
     return 0
 
