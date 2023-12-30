@@ -5,7 +5,6 @@ apt-get -y upgrade
 #apt-get -y install python3-pip
 #apt-get -y install mysql-server
 #service mysql start
-
 apt-get -y install wget
 
 cd ~
@@ -13,9 +12,6 @@ wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster-communi
 dpkg -i mysql-cluster-community-management-server_8.2.0-1ubuntu22.04_amd64.deb
 mkdir /var/lib/mysql-cluster
 
-# Use this in case you're not able to set correct rules for enabling port 
-#ufw disable 
-# port 1186
 
 ## How to run Ubuntu on Docker
 ## docker pull ubuntu
