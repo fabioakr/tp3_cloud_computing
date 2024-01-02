@@ -227,32 +227,50 @@ ndb-connectstring=""" + manager_private_ip_addresses[0] + """   # location of ma
 
     mysql_restart = """systemctl restart mysql
 sudo systemctl enable mysql"""
-    #send_commands(ssm_client, manager[0].instance_id, mysql_restart)
     send_commands_without_waiter(ssm_client, manager[0].instance_id, mysql_restart)
 
+    ## Waits for system to be able to reset
     time.sleep(200)
-    print("It's over!")
 
-'''cd ~
-cd /var
-mkdir installing
-cd installing
-wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar
-mkdir install
-tar -xvf mysql-cluster_8.2.0-1ubuntu22.04_amd64.deb-bundle.tar -C install/
-cd install
+    bench_commands = """cd /var/lib/sakila/sakila-db
+mysql -e "SOURCE sakila-schema.sql;"
+mysql -e "SOURCE sakila-data.sql;"
+sysbench oltp_read_write --table-size=1000000 --mysql-db=sakila --mysql-user=root prepare
+sysbench oltp_read_write --table-size=1000000 --threads=6 --time=60 --max-requests=0 --mysql-db=sakila --mysql-user=root run > /var/log/bench_results.txt"""
+    send_commands_without_waiter(ssm_client, manager[0].instance_id, bench_commands)
 
-apt-get update
-apt-get -y install libaio1 libmecab2  ## IDK if here you need to reset your instance
+    ## Sends command to read the log file containing the benchmark results. ##
+    instance_ids = [instance.instance_id for instance in manager]
+    file_path = '/var/log/bench_results.txt'
+    response = ssm_client.send_command(
+        InstanceIds=instance_ids,
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [f'cat {file_path}']}
+    )
 
-dpkg -i mysql-common_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-client-plugins_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-client-core_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-client_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-client_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-server-core_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-server_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-server_8.2.0-1ubuntu22.04_amd64.deb'''
+    # Retrieve the command output
+    command_id = response['Command']['CommandId']
+
+    # Wait for the command to complete
+    waiter = ssm_client.get_waiter('command_executed')
+    waiter.wait(
+        CommandId=command_id,
+        InstanceId=manager[0].id
+    )
+
+    # Get the command output
+    output = ssm_client.get_command_invocation(
+        CommandId=command_id,
+        InstanceId=manager[0].id
+    )['StandardOutputContent']
+
+    # Print the file contents on the terminal
+    print(f'Contents of {file_path}:\n{output}')
+
+    ## Terminates all instances and load balancers to save up AWS credits. ##
+    #time.sleep(5)
+    print('Finally, now terminating all instances...\n')
+    cleaning_after_tests(client)
 
 ##  Takes the program back to main(). ##
 if __name__ == '__main__':
