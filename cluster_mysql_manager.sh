@@ -15,6 +15,9 @@ mkdir /var/lib/mysql-cluster
 ## Installs tool that unzips stuff ##
 apt-get -y install unzip
 
+## Installs sysbench ##
+apt-get -y install sysbench
+
 ## Downloads and unzips the sakila database ##
 apt-get -y install curl
 mkdir /var/lib/sakila
