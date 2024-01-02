@@ -2,7 +2,6 @@
 
 apt-get update
 apt-get -y upgrade
-#apt-get -y install python3-pip
 apt-get -y install mysql-server
 service mysql start
 
@@ -16,8 +15,6 @@ unzip sakila-db.zip
 cd sakila-db
 
 ## Installs the sakila database ##
-#mysql -u root
-#mysql
 mysql -e "SOURCE sakila-schema.sql;"
 mysql -e "SOURCE sakila-data.sql;"
 
