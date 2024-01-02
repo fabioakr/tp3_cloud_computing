@@ -19,7 +19,7 @@ dpkg -i mysql-cluster-community-data-node_8.2.0-1ubuntu22.04_amd64.deb
 mkdir -p /usr/local/mysql/data
 
 # Use this in case you're not able to set correct rules for enabling port 
-#ufw disable 
+ufw disable 
 
 ## How to run Ubuntu on Docker
 ## docker pull ubuntu
