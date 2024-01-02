@@ -253,6 +253,42 @@ def send_commands(ssm_client, instance_id, command): #### IDK IF THIS NEEDS SUDO
 
     return 0
 
+def send_commands_without_waiter(ssm_client, instance_id, command): #### IDK IF THIS NEEDS SUDO OR NOT IN "COMMAND". PLS CHECK. SEEMS THAT's NOT NEEDED
+    # Send the command to the EC2 instance
+    response = ssm_client.send_command(
+        InstanceIds=[instance_id],
+        DocumentName='AWS-RunShellScript',
+        Parameters={'commands': [command]}
+    )
+
+    # Get the command ID for later retrieval
+    command_id = response['Command']['CommandId']
+
+    # Print the command ID
+    print(f"Command ID: {command_id}")
+
+    # Poll for the command completion status
+    #waiter = ssm_client.get_waiter("command_executed")
+    #try:
+    #    waiter.wait(
+    #        CommandId=command_id,
+    #        InstanceId=instance_id,
+    #    )
+    #except WaiterError as ex:
+    #    logging.error(ex)
+    #    return
+
+    # Get the command output
+    #output = ssm_client.get_command_invocation(
+    #    CommandId=command_id,
+    #    InstanceId=instance_id
+    #)['StandardOutputContent']
+
+    # Print the command output
+    #print(f'Command Output:\n{output}')
+
+    return 0
+
 def create_files(ssm_client, instance_id, file_content, file_path):
     # Send the command to create the text file
     command = f'echo "{file_content}" > {file_path}'
