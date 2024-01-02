@@ -11,7 +11,8 @@ import boto3
 ## Imports libraries created by us. ##
 from creating_aws_objects import create_keypair, create_security_group, create_instances
 from creating_aws_objects import create_instance_profiles, send_commands, create_files
-from creating_aws_objects import create_manager_file, create_worker_file
+from creating_aws_objects import create_manager_file, create_worker_file, append_files
+from creating_aws_objects import send_commands_without_waiter
 from cleaning import main as cleaning_after_tests
 
 
@@ -108,7 +109,7 @@ def main():
     ## Creates worker instances ##
     print("\nCreating worker instances...")
     workers = create_instances(ec2,
-                                2,
+                                3,
                                 't2.micro',
                                 'ami-053b0d53c279acc90',
                                 security_group_workers,
@@ -175,13 +176,14 @@ def main():
     create_manager_file(ssm_client, manager[0].id, manager_private_ip_addresses, workers_private_ip_addresses)
     create_worker_file(ssm_client, workers[0].id, manager_private_ip_addresses)
     create_worker_file(ssm_client, workers[1].id, manager_private_ip_addresses)
+    create_worker_file(ssm_client, workers[2].id, manager_private_ip_addresses)
 
     ## Enables manager node ##
     print("Enabling manager node...")
     send_commands(ssm_client, manager[0].instance_id, 'ndb_mgmd -f /var/lib/mysql-cluster/config.ini')
 
     ## Enables workers nodes ##
-    for i in range(2):
+    for i in range(3):
         print(f"Enabling worker node {i}...")
         send_commands(ssm_client, workers[i].instance_id, 'ndbd')
 
@@ -205,8 +207,31 @@ dpkg -i mysql-cluster-community-client-core_8.2.0-1ubuntu22.04_amd64.deb
 dpkg -i mysql-cluster-community-client_8.2.0-1ubuntu22.04_amd64.deb
 dpkg -i mysql-client_8.2.0-1ubuntu22.04_amd64.deb
 dpkg -i mysql-cluster-community-server-core_8.2.0-1ubuntu22.04_amd64.deb
-dpkg -i mysql-cluster-community-server_8.2.0-1ubuntu22.04_amd64.deb"""
+dpkg -i mysql-cluster-community-server_8.2.0-1ubuntu22.04_amd64.deb
+dpkg -i mysql-server_8.2.0-1ubuntu22.04_amd64.deb
+"""
     send_commands(ssm_client, manager[0].instance_id, mysql_server_config)
+
+    ## Enables MySQL server and client ##
+    print("Enabling MySQL server and client on worker instance... This will take a while!")
+    file_path = '/etc/mysql/my.cnf'
+    append_content = """
+[mysqld]
+# Options for mysqld process:
+ndbcluster                      # run NDB storage engine
+
+[mysql_cluster]
+# Options for NDB Cluster processes:
+ndb-connectstring=""" + manager_private_ip_addresses[0] + """   # location of management server"""
+    append_files(ssm_client, manager[0].instance_id, append_content, file_path)
+
+    mysql_restart = """systemctl restart mysql
+sudo systemctl enable mysql"""
+    #send_commands(ssm_client, manager[0].instance_id, mysql_restart)
+    send_commands_without_waiter(ssm_client, manager[0].instance_id, mysql_restart)
+
+    time.sleep(200)
+    print("It's over!")
 
 '''cd ~
 cd /var
