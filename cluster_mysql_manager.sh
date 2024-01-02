@@ -12,6 +12,17 @@ wget https://dev.mysql.com/get/Downloads/MySQL-Cluster-8.2/mysql-cluster-communi
 dpkg -i mysql-cluster-community-management-server_8.2.0-1ubuntu22.04_amd64.deb
 mkdir /var/lib/mysql-cluster
 
+## Installs tool that unzips stuff ##
+apt-get -y install unzip
+
+## Downloads and unzips the sakila database ##
+apt-get -y install curl
+mkdir /var/lib/sakila
+cd /var/lib/sakila
+curl -sS https://downloads.mysql.com/docs/sakila-db.zip > sakila-db.zip
+unzip sakila-db.zip
+#cd sakila-db
+
 ufw disable 
 
 ## How to run Ubuntu on Docker
