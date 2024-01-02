@@ -267,26 +267,6 @@ def send_commands_without_waiter(ssm_client, instance_id, command): #### IDK IF 
     # Print the command ID
     print(f"Command ID: {command_id}")
 
-    # Poll for the command completion status
-    #waiter = ssm_client.get_waiter("command_executed")
-    #try:
-    #    waiter.wait(
-    #        CommandId=command_id,
-    #        InstanceId=instance_id,
-    #    )
-    #except WaiterError as ex:
-    #    logging.error(ex)
-    #    return
-
-    # Get the command output
-    #output = ssm_client.get_command_invocation(
-    #    CommandId=command_id,
-    #    InstanceId=instance_id
-    #)['StandardOutputContent']
-
-    # Print the command output
-    #print(f'Command Output:\n{output}')
-
     return 0
 
 def create_files(ssm_client, instance_id, file_content, file_path):
