@@ -74,21 +74,11 @@ def obtain_orchestrator_ip(orchestrator):
 
 
 def main():
-    ## Assign the number of threads and requests used
-    ## n_threads = 12
-    ## n_requests = 10
-
     ## Assigns region name to be used.
     region_name = 'us-east-1'
 
     ## Assigns key pair name to be used.
     key_pair_name = 'key_pair_tp3'
-
-    ## If we put in three arguments they are used to specify the number of threads
-    ## and requests. Otherwise we use default values
-    #if len(sys.argv) == 3:
-    #    n_threads = int(sys.argv[1])
-    #    n_requests = int(sys.argv[2])
 
     ## The 'client' variable creates a link to the EC2 service. ##
     client = boto3.client('ec2', region_name)
@@ -129,7 +119,6 @@ def main():
     ## Collects instance ids. Needed for sending the command  ##
     ## to read the log file containing the benchmark results. ##
     instance_ids = [instance.instance_id for instance in workers]
-    #print(instance_ids[0])
     instance_id = instance_ids[0]
 
     ## Puts the code on hold, so instance has enough time to run benchmark. ##
@@ -165,19 +154,8 @@ def main():
     print(f'Contents of {file_path}:\n{output}')
 
     ## Terminates all instances and load balancers to save up AWS credits. ##
-    #time.sleep(5)
     print('Finally, now terminating all instances...\n')
     cleaning_after_tests(client)
-
-'''
-    # create workers.json file
-    create_workers_file(ec2, workers)
-
-    orchestrator_ip = obtain_orchestrator_ip(orchestrator[0])
-
-    # Workloads
-    run_workloads(orchestrator_ip, n_threads, n_requests)
-'''
 
 
 ##  Takes the program back to main(). ##
